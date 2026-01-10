@@ -3,10 +3,10 @@
 set -eoux pipefail
 
 ###############################################################################
-# Main Build Script
+# Main Build Script - ars-blue
 ###############################################################################
-# This script follows the @ublue-os/bluefin pattern for build scripts.
-# It uses set -eoux pipefail for strict error handling and debugging.
+# This script installs Niri scrollable-tiling Wayland compositor and
+# DankMaterialShell desktop environment for ars-blue OS.
 ###############################################################################
 
 # Source helper functions
@@ -29,13 +29,26 @@ cp /ctx/custom/flatpaks/*.preinstall /etc/flatpak/preinstall.d/
 
 echo "::endgroup::"
 
-echo "::group:: Install Packages"
+echo "::group:: Install Niri and DankMaterialShell"
 
-# Install packages using dnf5
-# Example: dnf5 install -y tmux
+# Install Niri and DankMaterialShell from avengemedia/danklinux COPR
+# Following official installation instructions from https://danklinux.com
+# Using isolated COPR pattern to ensure repository is disabled after install
+copr_install_isolated "avengemedia/danklinux" \
+    niri \
+    dms \
+    xwayland-satellite \
+    alacritty
 
-# Example using COPR with isolated pattern:
-# copr_install_isolated "ublue-os/staging" package-name
+echo "::endgroup::"
+
+echo "::group:: Configure Niri and DankMaterialShell"
+
+# Enable DMS service to start with Niri
+# This will be configured per-user on first login
+# Create system-wide preset to enable DMS with Niri
+mkdir -p /etc/systemd/user/niri.service.wants
+ln -sf /usr/lib/systemd/user/dms.service /etc/systemd/user/niri.service.wants/dms.service
 
 echo "::endgroup::"
 
@@ -43,8 +56,10 @@ echo "::group:: System Configuration"
 
 # Enable/disable systemd services
 systemctl enable podman.socket
-# Example: systemctl mask unwanted-service
+
+# GDM should already be enabled in the base image
+# Niri will be available as a session option in GDM
 
 echo "::endgroup::"
 
-echo "Custom build complete!"
+echo "ars-blue build complete! Niri + DankMaterialShell installed."

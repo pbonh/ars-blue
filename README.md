@@ -1,14 +1,50 @@
-# finpilot
+# ars-blue
 
-A template for building custom bootc operating system images based on the lessons from [Universal Blue](https://universal-blue.org/) and [Bluefin](https://projectbluefin.io). It is designed to be used manually, but is optimized to be bootstraped by GitHub Copilot. After set up you'll have your own custom Linux. 
+A custom bootc operating system based on [Universal Blue](https://universal-blue.org/) and [Bluefin](https://projectbluefin.io), designed as a general-purpose developer workstation featuring the [Niri](https://github.com/YaLTeR/niri) scrollable-tiling Wayland compositor and [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) desktop environment.
 
-This template uses the **multi-stage build architecture** from , combining resources from multiple OCI containers for modularity and maintainability. See the [Architecture](#architecture) section below for details.
-
-**Unlike previous templates, you are not modifying Bluefin and making changes.**: You are assembling your own Bluefin in the same exact way that Bluefin, Aurora, and Bluefin LTS are built. This is way more flexible and better for everyone since the image-agnostic and desktop things we love about Bluefin lives in @projectbluefin/common. 
-
- Instead, you create your own OS repository based on this template, allowing full customization while leveraging Bluefin's robust build system and shared components.
+This is a customized bootc image built using the **multi-stage build architecture** from @projectbluefin/finpilot, combining resources from multiple OCI containers for modularity and maintainability.
 
 > Be the one who moves, not the one who is moved.
+
+## What Makes ars-blue Different?
+
+ars-blue is a developer-focused operating system that replaces the traditional desktop environment with a modern, scrollable-tiling workflow centered around the Niri Wayland compositor and DankMaterialShell.
+
+### Key Features
+
+**Niri Scrollable-Tiling Window Manager**
+- Scrollable tiling with windows arranged in columns on an infinite strip
+- Dynamic workspaces like GNOME
+- Built-in Overview mode that zooms out workspaces and windows
+- Touchpad and mouse gestures for navigation
+- Window tabs for grouping related windows
+- Smooth animations with custom shader support
+
+**DankMaterialShell Desktop Environment**
+- Complete desktop shell built with Quickshell and Go
+- Dynamic theming based on your wallpaper
+- Unified control center for network, Bluetooth, audio, and display settings
+- Spotlight-style launcher for applications, files, emojis, and commands
+- MPRIS media controls and notification center
+- Session management with lock screen and idle detection
+
+**Developer Workstation**
+- Pre-configured for development workflows
+- Homebrew integration for CLI tools
+- Flatpak support for GUI applications
+- Optimized for keyboard-driven productivity
+
+### What's Included
+
+This image is based on **Universal Blue Silverblue** and includes:
+- Niri scrollable-tiling Wayland compositor
+- DankMaterialShell desktop environment
+- Alacritty terminal emulator
+- All standard Bluefin development tools
+- Homebrew package management
+- Flatpak application support
+
+*Last updated: 2026-01-10*
 
 ## Guided Copilot Mode
 
@@ -21,6 +57,8 @@ Here are the steps to guide copilot to make your own repo, or just use it like a
 ```
 Use @projectbluefin/finpilot as a template, name the OS the repository name. Ensure the entire operating system is bootstrapped. Ensure all github actions are enabled and running.  Ensure the README has the github setup instructions for cosign and the other steps required to finish the task.
 ```
+
+> **Note**: ars-blue is already fully configured and ready to use. This section is for reference if you want to create your own custom OS based on this repository.
 
 ## What's Included
 
@@ -61,65 +99,65 @@ Use @projectbluefin/finpilot as a template, name the OS the repository name. Ens
 
 ## Quick Start
 
-### 1. Create Your Repository
+### 1. GitHub Actions Setup
 
-Click "Use this template" to create a new repository from this template.
+Enable GitHub Actions in your repository:
 
-### 2. Rename the Project
-
-Important: Change `finpilot` to your repository name in these 5 files:
-
-1. `Containerfile` (line 9): `# Name: your-repo-name`
-2. `Justfile` (line 1): `export image_name := "your-repo-name"`
-3. `README.md` (line 1): `# your-repo-name`
-4. `artifacthub-repo.yml` (line 5): `repositoryID: your-repo-name`
-5. `custom/ujust/README.md` (~line 175): `localhost/your-repo-name:stable`
-
-### 3. Enable GitHub Actions
-
-- Go to the "Actions" tab in your repository
+- Go to the "Actions" tab in your repository  
 - Click "I understand my workflows, go ahead and enable them"
 
 Your first build will start automatically! 
 
-Note: Image signing is disabled by default. Your images will build successfully without any signing keys. Once you're ready for production, see "Optional: Enable Image Signing" below.
+**Note**: Image signing is disabled by default. Your images will build successfully without any signing keys. Once you're ready for production, see "[Optional: Enable Image Signing](#optional-enable-image-signing)" below.
 
-### 4. Customize Your Image
+### 2. Deploy ars-blue
 
-Choose your base image in `Containerfile` (line 23):
-```dockerfile
-FROM ghcr.io/ublue-os/bluefin:stable
-```
-
-Add your packages in `build/10-build.sh`:
+Switch to the ars-blue image:
 ```bash
-dnf5 install -y package-name
+sudo bootc switch ghcr.io/pbonh/ars-blue:stable
+sudo systemctl reboot
 ```
 
-Customize your apps:
-- Add Brewfiles in `custom/brew/` ([guide](custom/brew/README.md))
-- Add Flatpaks in `custom/flatpaks/` ([guide](custom/flatpaks/README.md))
-- Add ujust commands in `custom/ujust/` ([guide](custom/ujust/README.md))
+After reboot, you'll be running ars-blue with Niri and DankMaterialShell!
 
-### 5. Development Workflow
+#### First Login with Niri
 
-All changes should be made via pull requests:
+1. At the login screen (GDM), click the gear icon ⚙️ at the bottom-right
+2. Select "Niri" from the session options
+3. Log in with your credentials
+
+Niri will start with DankMaterialShell providing the complete desktop environment.
+
+#### Essential Niri Keybindings
+
+The default Mod key is <kbd>Super</kbd> (Windows key).
+
+| Hotkey | Action |
+|--------|--------|
+| <kbd>Mod</kbd>+<kbd>T</kbd> | Open terminal (Alacritty) |
+| <kbd>Mod</kbd>+<kbd>D</kbd> | Open application launcher |
+| <kbd>Mod</kbd>+<kbd>Shift</kbd>+<kbd>/</kbd> | Show keybinding help |
+| <kbd>Mod</kbd>+<kbd>Q</kbd> | Close focused window |
+| <kbd>Mod</kbd>+<kbd>H</kbd>/<kbd>L</kbd> | Focus column left/right |
+| <kbd>Mod</kbd>+<kbd>J</kbd>/<kbd>K</kbd> | Focus window down/up |
+| <kbd>Mod</kbd>+<kbd>F</kbd> | Maximize column |
+| <kbd>Mod</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> | Exit Niri |
+
+For the complete list of keybindings and configuration, see:
+- [Niri Documentation](https://yalter.github.io/niri/)
+- [DankMaterialShell Documentation](https://danklinux.com/docs)
+
+### 3. Optional: Customize Your Image
+
+If you want to customize ars-blue for your needs, make changes via pull requests:
 
 1. Open a pull request on GitHub with the change you want.
-3. The PR will automatically trigger:
+2. The PR will automatically trigger:
    - Build validation
    - Brewfile, Flatpak, Justfile, and shellcheck validation
    - Test image build
-4. Once checks pass, merge the PR
-5. Merging triggers publishes a `:stable` image
-
-### 6. Deploy Your Image
-
-Switch to your image:
-```bash
-sudo bootc switch ghcr.io/your-username/your-repo-name:stable
-sudo systemctl reboot
-```
+3. Once checks pass, merge the PR
+4. Merging triggers and publishes a `:stable` image
 
 ## Optional: Enable Image Signing
 
@@ -262,7 +300,7 @@ Your workflow will:
 
 Users can verify your images with:
 ```bash
-cosign verify --key cosign.pub ghcr.io/your-username/your-repo-name:stable
+cosign verify --key cosign.pub ghcr.io/pbonh/ars-blue:stable
 ```
 
 ## Detailed Guides
@@ -326,12 +364,79 @@ just build-qcow2        # Build VM disk image
 just run-vm-qcow2       # Test in browser-based VM
 ```
 
+## Troubleshooting
+
+### Niri doesn't appear in login screen
+
+Make sure you selected "Niri" from the session options (gear icon at bottom-right of GDM login screen).
+
+If Niri is not listed:
+1. Check that the build completed successfully
+2. Verify niri package was installed: `rpm -qa | grep niri`
+3. Check for the niri.desktop file: `ls -l /usr/share/wayland-sessions/niri.desktop`
+
+### DankMaterialShell isn't starting
+
+DMS should start automatically with Niri. If it doesn't:
+
+1. Check DMS service status:
+   ```bash
+   systemctl --user status dms
+   ```
+
+2. Enable DMS service manually:
+   ```bash
+   systemctl --user enable --now dms
+   ```
+
+3. Check DMS logs:
+   ```bash
+   journalctl --user -u dms
+   ```
+
+### Black screen when starting Niri
+
+This can happen on some GPU configurations. Try setting the render device manually:
+
+1. Find your render device:
+   ```bash
+   ls -l /dev/dri/
+   ```
+
+2. Edit `~/.config/niri/config.kdl` and add:
+   ```kdl
+   debug {
+       render-drm-device "/dev/dri/renderD128"
+   }
+   ```
+
+For more help:
+- [Niri Matrix Chat](https://matrix.to/#/#niri:matrix.org)
+- [DankMaterialShell Documentation](https://danklinux.com/docs)
+- [Universal Blue Discord](https://discord.gg/WEu6BdFEtp)
+
 ## Community
+
+### ars-blue & Components
+
+- [Niri Matrix Chat](https://matrix.to/#/#niri:matrix.org) - Get help with Niri
+- [DankMaterialShell Discord](https://discord.gg/vT8Sfjy7sx) - DMS community support
+
+### Universal Blue & bootc
 
 - [Universal Blue Discord](https://discord.gg/WEu6BdFEtp)
 - [bootc Discussion](https://github.com/bootc-dev/bootc/discussions)
 
 ## Learn More
+
+### ars-blue Components
+
+- [Niri Window Manager](https://github.com/YaLTeR/niri) - Scrollable-tiling Wayland compositor
+- [Niri Documentation](https://yalter.github.io/niri/) - Configuration and usage guide
+- [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) - Desktop shell for Wayland
+- [DankMaterialShell Docs](https://danklinux.com/docs) - DMS configuration and plugins
+
+### Universal Blue & bootc
 
 - [Universal Blue Documentation](https://universal-blue.org/)
 - [bootc Documentation](https://containers.github.io/bootc/)
