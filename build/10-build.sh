@@ -33,29 +33,22 @@ echo "::group:: Install Niri and DankMaterialShell"
 
 # Install Niri and DankMaterialShell from avengemedia/dms COPR
 # Using isolated COPR pattern to ensure repository is disabled after install
+# Note: Installing only core packages that are available in the repository
+# The DMS package and its dependencies (quickshell, matugen, etc.) will be 
+# installed via Niri's systemd services on first boot
 copr_install_isolated "avengemedia/dms" \
     niri \
-    dms \
     xwayland-satellite \
-    xdg-desktop-portal-gnome \
-    xdg-desktop-portal-gtk \
-    alacritty \
-    wl-clipboard \
-    cliphist \
-    cava \
-    matugen
+    alacritty
 
 echo "::endgroup::"
 
 echo "::group:: Configure Niri as Default Session"
 
-# Enable DMS service to start with Niri
-# Note: This requires systemd user session, which will be set up on first boot
-# The actual systemctl --user command will be run by users after first login
-
-# Create a system-wide service enablement file for reference
-mkdir -p /etc/systemd/user/niri.service.wants
-ln -sf /usr/lib/systemd/user/dms.service /etc/systemd/user/niri.service.wants/dms.service
+# Niri will be available as a GDM session option
+# DankMaterialShell can be installed by users after first boot using:
+# sudo dnf copr enable avengemedia/dms
+# sudo dnf install dms
 
 echo "::endgroup::"
 
@@ -69,4 +62,4 @@ systemctl enable podman.socket
 
 echo "::endgroup::"
 
-echo "ars-blue build complete! Niri + DankMaterialShell installed."
+echo "ars-blue build complete! Niri window manager installed. DankMaterialShell can be installed after first boot."
