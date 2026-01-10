@@ -119,12 +119,38 @@ sudo systemctl reboot
 
 After reboot, you'll be running ars-blue with Niri and DankMaterialShell!
 
+#### First Login with Niri
+
+1. At the login screen (GDM), click the gear icon ⚙️ at the bottom-right
+2. Select "Niri" from the session options
+3. Log in with your credentials
+
+Niri will start with DankMaterialShell providing the complete desktop environment.
+
+#### Essential Niri Keybindings
+
+The default Mod key is <kbd>Super</kbd> (Windows key).
+
+| Hotkey | Action |
+|--------|--------|
+| <kbd>Mod</kbd>+<kbd>T</kbd> | Open terminal (Alacritty) |
+| <kbd>Mod</kbd>+<kbd>D</kbd> | Open application launcher |
+| <kbd>Mod</kbd>+<kbd>Shift</kbd>+<kbd>/</kbd> | Show keybinding help |
+| <kbd>Mod</kbd>+<kbd>Q</kbd> | Close focused window |
+| <kbd>Mod</kbd>+<kbd>H</kbd>/<kbd>L</kbd> | Focus column left/right |
+| <kbd>Mod</kbd>+<kbd>J</kbd>/<kbd>K</kbd> | Focus window down/up |
+| <kbd>Mod</kbd>+<kbd>F</kbd> | Maximize column |
+| <kbd>Mod</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> | Exit Niri |
+
+For the complete list of keybindings and configuration, see:
+- [Niri Documentation](https://yalter.github.io/niri/)
+- [DankMaterialShell Documentation](https://danklinux.com/docs)
+
 ### 3. Optional: Customize Your Image
 
 If you want to customize ars-blue for your needs, make changes via pull requests:
 
 1. Open a pull request on GitHub with the change you want.
-2. The PR will automatically trigger:
 2. The PR will automatically trigger:
    - Build validation
    - Brewfile, Flatpak, Justfile, and shellcheck validation
@@ -337,12 +363,79 @@ just build-qcow2        # Build VM disk image
 just run-vm-qcow2       # Test in browser-based VM
 ```
 
+## Troubleshooting
+
+### Niri doesn't appear in login screen
+
+Make sure you selected "Niri" from the session options (gear icon at bottom-right of GDM login screen).
+
+If Niri is not listed:
+1. Check that the build completed successfully
+2. Verify niri package was installed: `rpm -qa | grep niri`
+3. Check for the niri.desktop file: `ls -l /usr/share/wayland-sessions/niri.desktop`
+
+### DankMaterialShell isn't starting
+
+DMS should start automatically with Niri. If it doesn't:
+
+1. Check DMS service status:
+   ```bash
+   systemctl --user status dms
+   ```
+
+2. Enable DMS service manually:
+   ```bash
+   systemctl --user enable --now dms
+   ```
+
+3. Check DMS logs:
+   ```bash
+   journalctl --user -u dms
+   ```
+
+### Black screen when starting Niri
+
+This can happen on some GPU configurations. Try setting the render device manually:
+
+1. Find your render device:
+   ```bash
+   ls -l /dev/dri/
+   ```
+
+2. Edit `~/.config/niri/config.kdl` and add:
+   ```kdl
+   debug {
+       render-drm-device "/dev/dri/renderD128"
+   }
+   ```
+
+For more help:
+- [Niri Matrix Chat](https://matrix.to/#/#niri:matrix.org)
+- [DankMaterialShell Documentation](https://danklinux.com/docs)
+- [Universal Blue Discord](https://discord.gg/WEu6BdFEtp)
+
 ## Community
+
+### ars-blue & Components
+
+- [Niri Matrix Chat](https://matrix.to/#/#niri:matrix.org) - Get help with Niri
+- [DankMaterialShell Discord](https://discord.gg/vT8Sfjy7sx) - DMS community support
+
+### Universal Blue & bootc
 
 - [Universal Blue Discord](https://discord.gg/WEu6BdFEtp)
 - [bootc Discussion](https://github.com/bootc-dev/bootc/discussions)
 
 ## Learn More
+
+### ars-blue Components
+
+- [Niri Window Manager](https://github.com/YaLTeR/niri) - Scrollable-tiling Wayland compositor
+- [Niri Documentation](https://yalter.github.io/niri/) - Configuration and usage guide
+- [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) - Desktop shell for Wayland
+- [DankMaterialShell Docs](https://danklinux.com/docs) - DMS configuration and plugins
+
+### Universal Blue & bootc
 
 - [Universal Blue Documentation](https://universal-blue.org/)
 - [bootc Documentation](https://containers.github.io/bootc/)
