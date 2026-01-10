@@ -38,12 +38,11 @@ ars-blue is a developer-focused operating system that replaces the traditional d
 
 This image is based on **Universal Blue Silverblue** and includes:
 - Niri scrollable-tiling Wayland compositor
+- DankMaterialShell desktop environment
 - Alacritty terminal emulator
 - All standard Bluefin development tools
 - Homebrew package management
 - Flatpak application support
-
-**Optional:** DankMaterialShell desktop environment can be installed after deployment for a complete desktop experience.
 
 *Last updated: 2026-01-10*
 
@@ -119,7 +118,7 @@ sudo bootc switch ghcr.io/pbonh/ars-blue:stable
 sudo systemctl reboot
 ```
 
-After reboot, you'll be running ars-blue with Niri window manager!
+After reboot, you'll be running ars-blue with Niri and DankMaterialShell!
 
 #### First Login with Niri
 
@@ -127,17 +126,7 @@ After reboot, you'll be running ars-blue with Niri window manager!
 2. Select "Niri" from the session options
 3. Log in with your credentials
 
-#### Installing DankMaterialShell (Optional)
-
-To add the complete DankMaterialShell desktop environment after first boot:
-
-```bash
-sudo dnf copr enable avengemedia/dms
-sudo dnf install dms
-systemctl --user enable --now dms
-```
-
-Then log out and log back in for the changes to take effect.
+Niri will start with DankMaterialShell providing the complete desktop environment.
 
 #### Essential Niri Keybindings
 
