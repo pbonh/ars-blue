@@ -57,17 +57,17 @@ To temporarily disable a script without deleting it:
 
 ## Execution Order
 
-The Containerfile runs scripts like this:
+The Containerfile runs a runner script that executes all executable, numbered scripts in ascending order and skips any with `.example` or `.disabled` suffixes:
 
 ```dockerfile
-RUN /ctx/build/10-build.sh
+RUN /ctx/build/00-runner.sh
 ```
 
-If you want to run multiple scripts, you can:
+Guidelines:
 
-1. **Modify Containerfile** to run each script explicitly
-2. **Create a runner script** that executes all numbered scripts
-3. **Use the default** and keep everything in `10-build.sh` (simplest)
+1. Ensure each script is executable: `chmod +x build/20-yourscript.sh`
+2. Use `.disabled` to skip temporarily or keep `.example` suffix for samples
+3. Keep scripts numbered and focused to control ordering and readability
 
 ## Notes
 
