@@ -3,9 +3,11 @@
 set -eoux pipefail
 
 ###############################################################################
-# Install DankMaterialShell + Niri stack using COPR packages
-# This script removes GNOME, installs DMS and all optional dependencies, and
-# configures greetd with a Niri session.
+# Install DankMaterialShell with Niri compositor
+# - Removes GNOME desktop components
+# - Installs Niri and supporting portals
+# - Installs DMS from the stable COPR with recommended extras
+# - Enables DMS user service for all users
 ###############################################################################
 
 # Source helper functions
@@ -13,6 +15,10 @@ set -eoux pipefail
 source /ctx/build/copr-helpers.sh
 
 echo "::group:: Remove GNOME Desktop"
+
+# Remove GNOME Shell and related packages
+# This mirrors the pattern used in the COSMIC example
+# and prepares the system for the Niri/DMS stack
 
 dnf5 remove -y \
     gnome-shell \
@@ -26,82 +32,56 @@ dnf5 remove -y \
 echo "GNOME desktop removed"
 echo "::endgroup::"
 
-echo "::group:: Install DankMaterialShell and optional dependencies"
+echo "::group:: Install display manager for Niri"
 
-# Install DMS and optional components from the stable COPR
+# Install a lightweight display manager to replace GDM
+# SDDM provides Wayland support and a session chooser
+
+dnf5 install -y sddm
+systemctl enable sddm
+
+echo "Display manager installed and enabled"
+echo "::endgroup::"
+
+echo "::group:: Install Niri compositor and portals"
+
+# Install Niri and basic Wayland/XDG integration
+
+dnf5 install -y \
+    niri \
+    xdg-desktop-portal-wlr \
+    accountsservice
+
+echo "Niri compositor installed"
+echo "::endgroup::"
+
+echo "::group:: Install DankMaterialShell (stable COPR)"
+
+# Install DMS and recommended extras from the documentation using the
+# isolated COPR pattern to avoid leaving the COPR enabled
 copr_install_isolated "avengemedia/dms" \
     dms \
     quickshell \
-    dsearch \
-    dgop \
-    matugen \
     cliphist \
     wl-clipboard \
-    cava
-
-# Remaining optional components available in Fedora/CentOS repos
-# - niri: preferred compositor for DMS
-# - qt6-multimedia: sound feedback
-# - i2c-tools: monitor backlight control via DDC
-# - accountsservice: persist user profile metadata
-# - greetd + tuigreet: lightweight display manager
-# - misc utilities already listed above
-# shellcheck disable=SC2034
-DNF_OPTIONAL_PACKAGES=(
-    niri
+    dgop \
+    dsearch \
+    matugen \
+    cava \
     qt6-multimedia
-    i2c-tools
-    accountsservice
-    greetd
-    tuigreet
-)
 
-dnf5 install -y "${DNF_OPTIONAL_PACKAGES[@]}"
-
-echo "DankMaterialShell stack installed"
+echo "DankMaterialShell and extras installed"
 echo "::endgroup::"
 
-echo "::group:: Configure greetd for Niri"
+echo "::group:: Enable DMS user service for all users"
 
-mkdir -p /etc/greetd
-cat > /etc/greetd/config.toml <<'GREETD_CONF'
-[terminal]
-vt = 1
+# Enable the user service globally so every user session starts DMS
+# on login. Using a persistent symlink avoids relying on systemd running
+# during the image build.
+mkdir -p /etc/systemd/user/default.target.wants
+ln -sf /usr/lib/systemd/user/dms.service /etc/systemd/user/default.target.wants/dms.service
 
-[default_session]
-command = "tuigreet --time --remember --cmd 'niri-session'"
-user = "greeter"
-GREETD_CONF
-
-# Enable greetd and set graphical target
-systemctl enable greetd
-systemctl set-default graphical.target
-
-echo "greetd configured for Niri"
+echo "DMS user service enabled for all users"
 echo "::endgroup::"
 
-echo "::group:: Register Niri session"
-
-mkdir -p /usr/share/wayland-sessions
-cat > /usr/share/wayland-sessions/niri.desktop <<'NIRIDESKTOP'
-[Desktop Entry]
-Name=Niri (DankMaterialShell)
-Comment=Tiling Wayland compositor with DankMaterialShell
-Exec=niri-session
-Type=Application
-DesktopNames=niri
-NIRIDESKTOP
-
-echo "Niri session registered"
-echo "::endgroup::"
-
-echo "::group:: Bind DMS to Niri (user wants)"
-
-# Pre-create user wants symlink so DMS starts with Niri sessions (no manual add-wants needed)
-mkdir -p /usr/lib/systemd/user/niri.service.wants
-ln -sf ../dms.service /usr/lib/systemd/user/niri.service.wants/dms.service
-
-echo "User wants symlink created for dms.service under niri.service"
-echo "::endgroup::"
-
-echo "DankMaterialShell + Niri installation complete"
+echo "DankMaterialShell with Niri installation complete"
