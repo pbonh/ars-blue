@@ -31,8 +31,13 @@ echo "::endgroup::"
 
 echo "::group:: Install Packages"
 
-# Install packages using dnf5
-# Example: dnf5 install -y tmux
+dnf5 install -y alacritty
+dnf5 install -y ansible
+dnf5 install -y fzf
+dnf5 install -y kitty
+dnf5 install -y libreoffice
+dnf5 install -y nu
+dnf5 install -y zsh
 
 # Example using COPR with isolated pattern:
 # copr_install_isolated "ublue-os/staging" package-name
