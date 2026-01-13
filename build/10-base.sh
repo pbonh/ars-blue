@@ -37,6 +37,7 @@ dnf5 install -y fzf
 dnf5 install -y kitty
 dnf5 install -y libreoffice
 dnf5 install -y nu
+dnf5 install -y syncthing
 dnf5 install -y zsh
 
 # Example using COPR with isolated pattern:

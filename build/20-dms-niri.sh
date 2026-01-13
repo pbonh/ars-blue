@@ -48,9 +48,9 @@ echo "::group:: Install Niri compositor and portals"
 # Install Niri and basic Wayland/XDG integration
 
 dnf5 install -y \
-    niri \
     xdg-desktop-portal-wlr \
     accountsservice
+    # niri \
 
 echo "Niri compositor installed"
 echo "::endgroup::"
@@ -59,16 +59,36 @@ echo "::group:: Install DankMaterialShell (stable COPR)"
 
 # Install DMS and recommended extras from the documentation using the
 # isolated COPR pattern to avoid leaving the COPR enabled
-copr_install_isolated "avengemedia/dms" \
-    dms \
+copr_install_isolated "avengemedia/danklinux" \
     quickshell \
-    cliphist \
-    wl-clipboard \
-    dgop \
-    dsearch \
-    matugen \
-    cava \
-    qt6-multimedia
+    niri
+copr_install_isolated "avengemedia/dms" dms
+# copr_install_isolated "avengemedia/danklinux" \
+#     dms \
+#     dms-cli \
+#     dgop \
+#     danksearch \
+#     dank-greeter \
+#     dms-color-picker \
+#     dmsclipboard \
+#     cli11 \
+#     cliphist \
+#     quickshell \
+#     wl-clipboard \
+#     matugen \
+#     cava \
+#     qt6-multimedia
+
+# breakpad
+# cli11
+# cliphist
+# danksearch
+# dgop
+# dms-greeter
+# ghostty
+# material-symbols-fonts
+# matugen
+# quickshell
 
 echo "DankMaterialShell and extras installed"
 echo "::endgroup::"
