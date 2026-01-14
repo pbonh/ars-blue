@@ -31,14 +31,16 @@ echo "::endgroup::"
 
 echo "::group:: Install Packages"
 
-dnf5 install -y alacritty
-dnf5 install -y ansible
-dnf5 install -y fzf
-dnf5 install -y kitty
-dnf5 install -y libreoffice
-dnf5 install -y nu
-dnf5 install -y syncthing
-dnf5 install -y zsh
+dnf5 install -y alacritty \
+    ansible \
+    distrobox \
+    fzf \
+    kitty \
+    libreoffice \
+    nu \
+    syncthing \
+    thunderbird \
+    zsh
 
 # Example using COPR with isolated pattern:
 # copr_install_isolated "ublue-os/staging" package-name

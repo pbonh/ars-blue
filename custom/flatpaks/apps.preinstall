@@ -1,0 +1,40 @@
+# Password Manager
+[Flatpak Preinstall com.bitwarden.desktop]
+Branch=stable
+
+# Containers
+[Flatpak Preinstall io.github.DenysMb.Kontainer]
+Branch=stable
+
+[Flatpak Preinstall io.github.dvlv.boxbuddyrs]
+Branch=stable
+
+# AI
+[Flatpak Preinstall com.jeffser.Alpaca]
+Branch=stable
+
+# Notes
+[Flatpak Preinstall md.obsidian.Obsidian]
+Branch=stable
+
+# Calculators
+[Flatpak Preinstall org.kde.cantor]
+Branch=stable
+
+[Flatpak Preinstall org.kde.kalgebra]
+Branch=stable
+
+[Flatpak Preinstall io.github.Qalculate]
+Branch=stable
+
+# Terminals
+[Flatpak Preinstall app.devsuite.Ptyxis]
+Branch=stable
+
+# Media
+[Flatpak Preinstall org.kde.plasmatube]
+Branch=stable
+
+# Cloud
+[Flatpak Preinstall com.github.zocker_160.SyncThingy]
+Branch=stable
