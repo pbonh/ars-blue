@@ -61,6 +61,8 @@ echo "::group:: Install DankMaterialShell (stable COPR)"
 # isolated COPR pattern to avoid leaving the COPR enabled
 copr_install_isolated "avengemedia/danklinux" \
     quickshell \
+    matugen \
+    dms-greeter \
     niri
 copr_install_isolated "avengemedia/dms" dms
 # copr_install_isolated "avengemedia/danklinux" \
