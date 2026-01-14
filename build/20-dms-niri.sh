@@ -32,17 +32,6 @@ dnf5 remove -y \
 echo "GNOME desktop removed"
 echo "::endgroup::"
 
-echo "::group:: Install display manager for Niri"
-
-# Install a lightweight display manager to replace GDM
-# SDDM provides Wayland support and a session chooser
-
-dnf5 install -y sddm
-systemctl enable sddm
-
-echo "Display manager installed and enabled"
-echo "::endgroup::"
-
 echo "::group:: Install Niri compositor and portals"
 
 # Install Niri and basic Wayland/XDG integration
@@ -97,13 +86,34 @@ echo "::endgroup::"
 
 echo "::group:: Enable DMS user service for all users"
 
-# Enable the user service globally so every user session starts DMS
-# on login. Using a persistent symlink avoids relying on systemd running
-# during the image build.
-mkdir -p /etc/systemd/user/default.target.wants
-ln -sf /usr/lib/systemd/user/dms.service /etc/systemd/user/default.target.wants/dms.service
+# Ensure user unit wants directories exist and enable DMS globally
+install -d /etc/systemd/user/default.target.wants /etc/systemd/user/niri.service.wants
+systemctl --global enable dms.service
+systemctl --global add-wants niri.service dms.service
 
 echo "DMS user service enabled for all users"
+echo "::endgroup::"
+
+echo "::group:: Configure greetd with dms-greeter"
+
+dnf5 install -y greetd
+
+install -d /etc/greetd
+cat > /etc/greetd/config.toml <<'EOF'
+[terminal]
+vt = 1
+
+[default_session]
+user = "greeter"
+command = "dms-greeter --command niri"
+EOF
+
+install -d -m 755 -o greeter -g greeter /var/cache/dms-greeter
+
+systemctl disable gdm.service lightdm.service sddm.service || true
+systemctl enable greetd
+
+echo "greetd configured for dms-greeter"
 echo "::endgroup::"
 
 echo "DankMaterialShell with Niri installation complete"
